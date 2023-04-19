@@ -1,0 +1,22 @@
+{
+  "env": {
+    "jest": true,
+    "node": true,
+    "es6": true,
+    "commonjs": false
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 13,
+    "sourceType": "module"
+
+  },
+  "rules": {
+    "no-prototype-builtins": "off",
+    "no-unused-vars": ["error", {
+      "argsIgnorePattern": "^_"
+    }]
+  }
+}

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+    app: 
+        container_name: tp2-backend
+        build: .
+        env_file:
+            - .env
+        ports:
+            - '${DOCKER_APP_PORT}:3000'
+        depends_on:
+            - db
+        volumes:
+            - ./src:/app/src
+            - ./.env:/app/.env
+        entrypoint: npm start
+    db:
+        container_name: tp2-backend-db
+        image: postgres:15.2-bullseye
+        env_file:
+            - .env
+        environment:
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+        ports:
+            - '5432:5432'
