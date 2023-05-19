@@ -26,12 +26,15 @@ Las variables de entorno son las siguientes:
 - `DB_NAME`: Nombre de la base de datos
 - `DB_USER`: Usuario de la base de datos
 - `DB_PASSWORD`: Contraseña de la base de datos
-- `DB_PORT`: Puerto de la base de datos
+- `DB_PORT`: Puerto de la base de datos. Esta variable siempre vale `5432` si la aplicación
+  se levanta usando Docker. Si se levanta de forma local, debe valer igual a la variable de ambiente `DOCKER_DB_PORT`
 - `DB_SYNC_MODE`: Modo de sincronización de la base de datos de Sequelize. Puede valer
   -  `alter`: Crea las tablas y las modifica si es necesario
   -  `force`: Borra todas las las tablas y las vuelve a crear
 
-- `DOCKER_APP_PORT`: Puerto al acceder al contenedor de la aplicación desde la máquina local
+- `DOCKER_APP_PORT`: Puerto para acceder al contenedor de la aplicación desde la máquina local
+- `DOCKER_DB_PORT`: Puerto para acceder al contender de la base de datos desde la máquina local
+
 
 
 ### Ejecución
