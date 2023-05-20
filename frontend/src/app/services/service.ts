@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { RestaurantData } from '../interface/restaurant';
 import { TableData } from '../interface/table';
 
@@ -25,5 +25,17 @@ export class TablesService {
 
 	getTables(): Observable<TableData> {
 		return this.http.get<TableData>(this.apiURL);
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class TablesRestaurantService {
+	private apiURL = 'http://localhost:3000/tables/';
+	constructor(private http: HttpClient) { }
+
+	async getTables(id: number): Promise<TableData> {
+		return await lastValueFrom(this.http.get<TableData>(this.apiURL + String(id)));
 	}
 }

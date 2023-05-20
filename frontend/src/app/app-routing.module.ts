@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RestaurantsComponent } from './restaurants/restaurants.component';
 import { TablesComponent } from './tables/tables.component';
 
 const routes: Routes = [
-	{ path: 'restaurants', component: RestaurantsComponent },
+	{ path: 'restaurants', loadChildren: () => import('./restaurants/restaurants.module').then(m => m.RestaurantsModule) },
 	{ path: 'tables', component: TablesComponent },
 	{ path: '**', redirectTo: 'restaurants', pathMatch: 'full' }
 ];

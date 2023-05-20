@@ -1,0 +1,6 @@
+canvas {
+	display: block;
+	/* Establecer el elemento canvas como un bloque */
+	margin: 0 auto;
+	/* Centrar el elemento canvas horizontalmente */
+}
