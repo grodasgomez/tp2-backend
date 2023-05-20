@@ -91,6 +91,58 @@
         color: #45a049;
       }
     </style>
+    <script>
+      async function fetchBookings() {
+        try {
+          const restaurant = document.getElementById("restaurant").value;
+          const date = document.getElementById("date").value;
+          const client = document.getElementById("client").value;
+
+          const restaurantId = await fetch(`/restaurants?name=${restaurant}`);
+          // TODO Crear checkeo para que no pueda colocar vacio restaurante ni fecha
+          const reservationData = await fetch(
+            `/reservations/?restaurant=${restaurantId}&date=${date}&client=${client}`
+          );
+          const data = await reservationData.json();
+
+          const filteredData = data.data.map((item) => {
+            return {
+              "Table Name": item.table.name,
+              Restaurant: item.restaurant.name,
+              Date: item.date,
+              Time: `${item.range_times[0].start}:00 - ${item.range_times[0].end}:00`,
+              Client: item.client.name,
+            };
+          });
+
+          // Update the table with the retrieved data
+          updateTable(filteredData);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function updateThemeToggleText() {
+        var themeToggle = document.querySelector(".theme-toggle");
+        if (document.documentElement.classList.contains("dark-mode")) {
+          themeToggle.textContent = "🌙";
+        } else {
+          themeToggle.textContent = "☀️";
+        }
+      }
+
+      function toggleDarkMode() {
+        var isDarkMode = document.documentElement.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", isDarkMode);
+        updateThemeToggleText();
+      }
+
+      // Load theme preference from localStorage
+      if (localStorage.getItem("darkMode") === "true") {
+        document.documentElement.classList.add("dark-mode");
+      }
+      // updateThemeToggleText();
+    </script>
   </head>
   <body>
     <h1>Restaurant Bookings</h1>
@@ -153,55 +205,6 @@
         });
       }
 
-      async function fetchBookings() {
-        try {
-          const restaurant = document.getElementById("restaurant").value;
-          const date = document.getElementById("date").value;
-          const client = document.getElementById("client").value;
-
-          const restaurantId = await fetch(`/restaurants?name=${restaurant}`);
-          // TODO Crear checkeo para que no pueda colocar vacio restaurante ni fecha
-          const reservationData = await fetch(
-            `/reservations/?restaurant=${restaurantId}&date=${date}&client=${client}`
-          );
-          const data = await reservationData.json();
-
-          const filteredData = data.data.map((item) => {
-            return {
-              "Table Name": item.table.name,
-              Restaurant: item.restaurant.name,
-              Date: item.date,
-              Time: `${item.range_times[0].start}:00 - ${item.range_times[0].end}:00`,
-              Client: item.client.name,
-            };
-          });
-
-          // Update the table with the retrieved data
-          updateTable(filteredData);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
-      function toggleDarkMode() {
-        var isDarkMode = document.documentElement.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", isDarkMode);
-        updateThemeToggleText();
-      }
-
-      function updateThemeToggleText() {
-        var themeToggle = document.querySelector(".theme-toggle");
-        if (document.documentElement.classList.contains("dark-mode")) {
-          themeToggle.textContent = "🌙";
-        } else {
-          themeToggle.textContent = "☀️";
-        }
-      }
-
-      // Load theme preference from localStorage
-      if (localStorage.getItem("darkMode") === "true") {
-        document.documentElement.classList.add("dark-mode");
-      }
       updateThemeToggleText();
     </script>
   </body>
