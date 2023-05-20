@@ -92,31 +92,103 @@
       }
     </style>
     <script>
-      async function fetchBookings() {
+      function updateTable(data, table) {
+        const columnOrder = [
+          "Table Name",
+          "Restaurant",
+          "Date",
+          "Time",
+          "Client",
+        ];
+        // Clear existing table data rows
+        while (table.rows.length > 1) {
+          table.deleteRow(1);
+        }
+
+        // Create table data rows
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          columnOrder.forEach((columnName) => {
+            const cell = document.createElement("td");
+            cell.textContent = item[columnName];
+            row.appendChild(cell);
+          });
+          table.appendChild(row);
+        });
+      }
+
+      async function fetchBookings(table) {
         try {
           const restaurant = document.getElementById("restaurant").value;
           const date = document.getElementById("date").value;
           const client = document.getElementById("client").value;
 
-          const restaurantId = await fetch(`/restaurants?name=${restaurant}`);
-          // TODO Crear checkeo para que no pueda colocar vacio restaurante ni fecha
-          const reservationData = await fetch(
-            `/reservations/?restaurant=${restaurantId}&date=${date}&client=${client}`
-          );
-          const data = await reservationData.json();
+          if (restaurant.trim() === "") {
+            alert("Please enter a restaurant name");
+          } else if (date.trim() === "") {
+            alert("Please enter a date");
+          } else {
+            // const restaurantId = await fetch(`/restaurants?name=${restaurant}`);
+            const restaurantObj = await fetch(
+              `http://localhost:3000/restaurants?name=${restaurant}`
+            ).then((response) => response.json());
+            console.log(restaurantObj.data[0]);
+            if (restaurantObj.data[0] == null) {
+              alert("Restaurant not found");
+              return;
+            }
+            const restaurantId = restaurantObj.data[0].id;
 
-          const filteredData = data.data.map((item) => {
-            return {
-              "Table Name": item.table.name,
-              Restaurant: item.restaurant.name,
-              Date: item.date,
-              Time: `${item.range_times[0].start}:00 - ${item.range_times[0].end}:00`,
-              Client: item.client.name,
-            };
-          });
+            let clientId = "";
 
-          // Update the table with the retrieved data
-          updateTable(filteredData);
+            if (client.trim() != "") {
+              const clientObj = await fetch(
+                `http://localhost:3000/clients?name=${client}`
+              ).then((response) => response.json());
+
+              if (clientObj.data[0] == null) {
+                alert("Client not found");
+                return;
+              }
+              clientId = clientObj.data[0].id;
+            }
+
+            const reservationObj = await fetch(
+              `http://localhost:3000/reservations/?restaurant=${restaurantId}&date=${date}&client=${clientId}`
+            ).then((response) => response.json());
+
+            if (reservationObj.data[0] == null) {
+              alert("Reservation not found");
+              return;
+            }
+
+            const reservationData = reservationObj.data;
+
+            const filteredData = reservationData.map((item) => {
+              return {
+                "Table Name": item.table.name,
+                Restaurant: item.restaurant.name,
+                Date: item.date,
+                Time: `${item.range_times[0].start}:00 - ${item.range_times[0].end}:00`,
+                Client: item.client.name,
+              };
+            });
+
+            // Sort the data by start time and table name
+            filteredData.sort((a, b) => {
+              const dateComparison = a.Time.localeCompare(b.Time);
+              if (dateComparison === 0) {
+                // If the start times are the same, sort by table name
+                const tableNameComparison = a["Table Name"].localeCompare(
+                  b["Table Name"]
+                );
+                return tableNameComparison;
+              }
+              return dateComparison;
+            });
+            // Update the table with the retrieved data
+            updateTable(filteredData, table);
+          }
         } catch (error) {
           console.error(error);
         }
@@ -155,25 +227,7 @@
     <label for="client">Client:</label>
     <input type="text" id="client" name="client" />
     <br /><br />
-    <button onclick="fetchBookings();">Filter</button>
-    <br /><br />
-
-    <!-- Bookings table -->
-    <table id="bookingsTable"></table>
-
-    <!-- Theme toggle button -->
-    <button class="theme-toggle" onclick="toggleDarkMode();">☀️🌙</button>
-
-    <!-- JavaScript -->
     <script type="module">
-      const columnOrder = [
-        "Table Name",
-        "Restaurant",
-        "Date",
-        "Time",
-        "Client",
-      ];
-
       // Create table
       const table = document.getElementById("bookingsTable");
 
@@ -186,25 +240,20 @@
         headerRow.appendChild(header);
       });
       table.appendChild(headerRow);
+    </script>
+    <button onclick="fetchBookings(document.getElementById('bookingsTable'));">
+      Filter
+    </button>
+    <br /><br />
 
-      function updateTable(data) {
-        // Clear existing table data rows
-        while (table.rows.length > 1) {
-          table.deleteRow(1);
-        }
+    <!-- Bookings table -->
+    <table id="bookingsTable"></table>
 
-        // Create table data rows
-        data.forEach((item) => {
-          const row = document.createElement("tr");
-          columnOrder.forEach((columnName) => {
-            const cell = document.createElement("td");
-            cell.textContent = item[columnName];
-            row.appendChild(cell);
-          });
-          table.appendChild(row);
-        });
-      }
+    <!-- Theme toggle button -->
+    <button class="theme-toggle" onclick="toggleDarkMode();">☀️🌙</button>
 
+    <!-- JavaScript -->
+    <script>
       updateThemeToggleText();
     </script>
   </body>
