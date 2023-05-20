@@ -4,10 +4,12 @@ import clientRouter from "./routes/clientRouter.js";
 import tableRouter from "./routes/tableRouter.js";
 import reservationRouter from "./routes/reservationRouter.js";
 import ValidationError from "./errors/ValidationError.js";
+import cors from "cors";
 
 const app = express();
 
 // Indicamos que vamos a recibir datos en formato JSON
+app.use(cors());
 app.use(express.json());
 
 // Definimos las rutas de la API
