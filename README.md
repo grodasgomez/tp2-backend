@@ -57,3 +57,10 @@ Las variables de entorno son las siguientes:
 3. Abrir el archivo `postman_collection.json` que se encuentra en la raíz del proyecto
 4. Listo!
 
+### Angular
+
+Colocar node_modules dentro de la carpeta frontend
+
+```
+docker-compose -f docker-compose-angular.yml up --build
+```

@@ -5,7 +5,11 @@ import tableRouter from "./routers/tableRouter.js";
 import reservationRouter from "./routers/reservationRouter.js";
 import ValidationError from "./errors/ValidationError.js";
 
+import cors from 'cors';
+
 const app = express();
+
+app.use(cors());
 
 // Indicamos que vamos a recibir datos en formato JSON
 app.use(express.json());

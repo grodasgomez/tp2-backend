@@ -1,0 +1,7 @@
+FROM node:18-alpine3.16
+
+run npm install -g @angular/cli
+
+WORKDIR /frontend
+
+COPY frontend ./

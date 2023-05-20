@@ -1,10 +1,12 @@
 import express from "express";
 import { createHandler } from "../utils/index.js";
-import { getAll, create, update, destroy } from "../handlers/tableHandler.js";
+import { getAll, create, update, destroy, getByRestaurant } from "../handlers/tableHandler.js";
 
 const router = express.Router();
 
 router.get("/", createHandler(getAll));
+
+router.get("/:id", createHandler(getByRestaurant));
 
 router.post("/", createHandler(create));
 

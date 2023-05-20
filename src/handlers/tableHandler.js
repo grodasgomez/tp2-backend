@@ -6,6 +6,10 @@ export const getAll = () => {
   return Table.findAll();
 };
 
+export const getByRestaurant = (req) => {
+  return Table.findAll({ where: { restaurantId: req.params.id }});
+};
+
 export const create = (req) => {
   const validator = new ValidatorJs(req.body, {
     name: "required|string",
