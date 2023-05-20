@@ -1,10 +1,30 @@
-import ValidatorJs from 'validatorjs';
-import {Restaurant} from '../infrastructure/sequelize.js';
-import ValidationError from '../errors/ValidationError.js';
-import ApiError from '../errors/ApiError.js';
+import ValidatorJs from "validatorjs";
+import { Restaurant } from "../infrastructure/sequelize.js";
+import ValidationError from "../errors/ValidationError.js";
+import ApiError from "../errors/ApiError.js";
 
-export const getAll = () => {
-  return Restaurant.findAll();
+export const getAll = async (req) => {
+  const validator = new ValidatorJs(req.query, {
+    name: "string",
+  });
+
+  if (validator.fails()) throw new ValidationError(validator.errors.all());
+
+  const payload = req.query;
+  const restaurants = await Restaurant.findAll({
+    where: {
+      ...(payload.name && { name: payload.name }),
+    },
+  });
+  console.log(restaurants);
+  const data = restaurants.map((restaurant) => ({
+    id: restaurant.id,
+    name: restaurant.name,
+    address: restaurant.address,
+    updatedAt: restaurant.updatedAt,
+    createdAt: restaurant.createdAt,
+  }));
+  return data;
 };
 
 export const create = (req) => {
