@@ -1,2 +1,15 @@
-{{tables|json}}
-<canvas #canvas></canvas>
+<div class="title">
+	<h2>Seleccionar Mesa a Reservar</h2>
+</div>
+<div>
+	<label style="font-size: 20px">Seleccionar piso: </label>
+	<select id="floor-select" style="font-size: 17px;" [ngModel]="selectedFloor" (ngModelChange)="ngOnChanges($event)">
+		<option *ngFor="let floor of floors" (ngModelChange)="ngOnChanges($event)">{{floor}}</option>
+	</select>
+</div>
+<div id="table-buttons">
+	<a *ngFor="let table of currentTables" href="http://google.com/?table={{table.id}}"
+		style="position: absolute; left: {{table.positionX}}px; bottom: {{table.positionY}}px;">
+		<button class="btn">Capacidad {{table.capacity}}</button>
+	</a>
+</div>

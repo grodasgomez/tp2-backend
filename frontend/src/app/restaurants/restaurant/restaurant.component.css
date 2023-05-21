@@ -1,6 +1,22 @@
-canvas {
-	display: block;
-	/* Establecer el elemento canvas como un bloque */
-	margin: 0 auto;
-	/* Centrar el elemento canvas horizontalmente */
+#table-buttons {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 2px solid #000000;
+}
+
+.title {
+	margin-top: 30px;
+	margin-block-end: 10px;
+	background: #435d7d;
+	color: #fff;
+	padding: 16px 30px;
+	min-width: 20%;
+	border-radius: 3px 3px 0 0;
+}
+
+.title h2 {
+	margin: 5px 0 0;
+	font-size: 24px;
 }

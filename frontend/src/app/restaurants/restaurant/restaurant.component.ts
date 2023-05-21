@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Table, TableData } from 'src/app/interface/table';
 import { TablesRestaurantService } from 'src/app/services/service';
@@ -8,18 +8,13 @@ import { TablesRestaurantService } from 'src/app/services/service';
 	templateUrl: './restaurant.component.html',
 	styleUrls: ['./restaurant.component.css']
 })
-export class RestaurantComponent implements OnInit, OnDestroy {
+export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	id: number = 0;
-	private sub: any;
-	private maxX: number = 0;
-	private maxY: number = 0;
-	private floors: number = 0;
+	selectedFloor: number = 1;
+	floors: number[] = [];
 	tables: Table[] = [];
-
-	@ViewChild('canvas', { static: true })
-	canvas!: ElementRef<HTMLCanvasElement>;
-
-	private ctx!: CanvasRenderingContext2D;
+	currentTables!: Table[];
+	private sub: any;
 
 	constructor(private route: ActivatedRoute, private tableService: TablesRestaurantService) { }
 
@@ -29,49 +24,42 @@ export class RestaurantComponent implements OnInit, OnDestroy {
 		});
 		this.tableService.getTables(this.id).then((data: TableData) => {
 			this.tables = data.data;
-			this.ctx = this.canvas.nativeElement.getContext('2d')!;
-			this.tables.forEach(element => {
-				this.maxX = Math.max(element.positionX, this.maxX);
-				this.maxY = Math.max(element.positionY, this.maxY);
-				this.floors = Math.max(element.floor, this.floors);
-			});
-			this.maxX += 100
-			this.maxY += 100
-			this.canvas.nativeElement.width = this.maxX;
-			this.canvas.nativeElement.height = this.maxY;
-			this.tables.forEach(element => {
-				this.ctx.fillStyle = 'rgb(100, 100, 200)';
-				this.ctx.fillRect(element.positionX, this.maxY - element.positionY - 50, 50, 50);
-				this.ctx.fillStyle = 'rgb(0, 0, 0)';
-				this.ctx.textAlign = 'center';
-				this.ctx.textBaseline = "middle";
-				this.ctx.font = '20px sans-serif';
-				this.ctx.fillText(String(element.capacity), element.positionX + 25, this.maxY - element.positionY - 25);
-			});
-		})
-		this.canvas.nativeElement.addEventListener('click', ev => this.collides(ev));
+			this.createMap();
+			this.updateMap();
+		});
 	}
 
-	collides(e: any) {
-		var rect = e.target.getBoundingClientRect();
-		var x = e.clientX - rect.left; //x position within the element.
-		var y = e.clientY - rect.top;  //y position within the element.
-		var isCollision = false;
-		for (var i = 0, len = this.tables.length; i < len; i++) {
-			var left = this.tables[i].positionX, right = this.tables[i].positionX + 50;
-			var top = this.maxY - this.tables[i].positionY - 50, bottom = this.maxY - this.tables[i].positionY;
-			if (right >= x
-				&& left <= x
-				&& bottom >= y
-				&& top <= y) {
-				isCollision = true;
+	createMap() {
+		let floors = 0;
+		let maxX = 0;
+		let maxY = 0;
+		this.tables.forEach(element => {
+			maxX = Math.max(element.positionX, maxX);
+			maxY = Math.max(element.positionY, maxY);
+			floors = Math.max(element.floor, floors);
+		});
+		const tableButtons = document.getElementById('table-buttons')!;
+		tableButtons.style.width = `${maxX + 115}px`;
+		tableButtons.style.height = `${maxY + 37}px`;
+		this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
+	}
+
+	updateMap() {
+		this.currentTables = [];
+		this.tables.forEach(table => {
+			if (+this.selectedFloor === +table.floor) {
+				this.currentTables.push(table);
 			}
-		}
-		console.log(isCollision)
-		return isCollision;
+		});
+		console.log(this.currentTables);
 	}
 
-	ngOnDestroy() {
+	ngOnDestroy(): void {
 		this.sub.unsubscribe();
+	}
+
+	ngOnChanges(changes: any): void {
+		this.selectedFloor = changes
+		this.updateMap();
 	}
 }
