@@ -22,13 +22,16 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	hours!: string[]
 	selectedHours!: string[]
 	selectedHour: number = 0;
-	selectedDate: any;
+	selectedDate: string = "";
 	today!: any;
 	paramDate!: string;
 	paramHours!: string;
 	selectedTable: number = -1;
-	clientId!: number;
+	clientDocumentNumber: string = "";
 	clientExist: boolean = false;
+	clientName: string = "";
+	clientLastName: string = "";
+	capacity: number = -1;
 
 	constructor(private route: ActivatedRoute, private tableService: TablesRestaurantService, private reservationsService: ReservationsRestaurantService, private clientsService: ClientsService) { }
 
@@ -45,7 +48,6 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 		});
 		this.clientsService.getClients().then((data: any) => {
 			this.clients = data.data;
-			console.log(this.clients)
 		});
 		let currentTime = new Date().getTime();
 		this.today = new Date(currentTime - 4 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -120,14 +122,76 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	ngOnButtonChange(changes: any): void {
-		console.log(changes)
-		if (changes.id === this.selectedTable)
+		if (changes.id === this.selectedTable) {
 			this.selectedTable = -1;
-		else
+			this.capacity = -1
+		}
+		else {
 			this.selectedTable = changes.id;
+			this.capacity = changes.capacity;
+		}
 	}
 
 	ngOnChangesClient(changes: any): void {
+		this.clientExist = false;
+		this.clientExist = this.clients.some(function (el) {
+			return el.documentNumber === changes;
+		});
+		if (this.clientExist) {
+			this.clientName = "";
+			this.clientLastName = "";
+		}
+	}
 
+	async ngOnSubmit(): Promise<void> {
+		if (this.selectedTable === -1) {
+			console.log("No se selecciono mesa")
+			return
+		}
+		if (this.selectedHours.length === 0) {
+			console.log("No se selecciono hora")
+			return
+		}
+		if (this.selectedDate === "") {
+			console.log("No se selecciono fecha")
+			return
+		}
+		if (this.clientDocumentNumber === "") {
+			console.log("No se ingreso cedula")
+			return
+		}
+		let clientExisted = true;
+		let clientId = -1;
+		if (!this.clientExist) {
+			let client = {
+				documentNumber: this.clientDocumentNumber,
+				name: this.clientName,
+				lastName: this.clientLastName
+			}
+			clientExisted = false;
+			clientId = await this.clientsService.postClient(JSON.stringify(client)).then((data: any) => {
+				return data.data.id;
+			})
+		}
+		let aux: { start: number; end: number; }[] = []
+		this.selectedHours.forEach(element => {
+			let range = {
+				start: +element.split(' ')[0],
+				end: +element.split(' ')[2]
+			}
+			aux.push(range)
+		});
+		if (clientExisted)
+			clientId = this.clients.find(el => el.documentNumber === this.clientDocumentNumber)!.id
+		let reservation = {
+			capacity: this.capacity,
+			clientId: clientId,
+			date: this.selectedDate,
+			tableId: this.selectedTable,
+			range_times: aux
+		}
+		this.reservationsService.postReservation(JSON.stringify(reservation))
+		alert("Reserva realizada con exito")
+		location.reload();
 	}
 }
