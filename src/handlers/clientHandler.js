@@ -3,7 +3,6 @@ import { Client } from "../infrastructure/sequelize.js";
 import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
 
-// TOOD ARREGLAR ESTO
 export const getAll = async (req) => {
   const validator = new ValidatorJs(req.query, {
     name: "string",
