@@ -69,6 +69,7 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	updateMap() {
+		this.selectedTable = -1;
 		this.currentTables = [];
 		this.tables.forEach(table => {
 			if (this.selectedDate) {
@@ -112,10 +113,25 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	ngOnChangesDate(changes: any): void {
-		if (changes === "")
-			return
+		if (changes === "") 
+		{
+			this.updateMap();
+			return;
+		}
 		this.reservationsService.getReservations(this.id, changes).then((data: ReservationData) => {
 			this.reservations = data.data;
+			this.reservations.forEach(reservation => {
+                let aux: { start: number; end: number; }[] = []
+                reservation.range_times.forEach(range => {
+                    let start = range.start;
+                    let end = range.end;
+                    while (start < end) {
+                        aux.push({ start: start, end: start + 1 })
+                        start++;
+                    }
+                })
+                reservation.range_times = aux;
+            })
 			this.selectedDate = changes;
 			this.updateMap();
 		})
@@ -145,24 +161,28 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 
 	async ngOnSubmit(): Promise<void> {
 		if (this.selectedTable === -1) {
-			console.log("No se selecciono mesa")
+			alert("No se selecciono mesa")
 			return
 		}
 		if (this.selectedHours.length === 0) {
-			console.log("No se selecciono hora")
+			alert("No se selecciono hora")
 			return
 		}
 		if (this.selectedDate === "") {
-			console.log("No se selecciono fecha")
+			alert("No se selecciono fecha")
 			return
 		}
 		if (this.clientDocumentNumber === "") {
-			console.log("No se ingreso cedula")
+			alert("No se ingreso cedula")
 			return
 		}
 		let clientExisted = true;
 		let clientId = -1;
 		if (!this.clientExist) {
+			if (this.clientName === "" || this.clientLastName === "") {
+				alert("No se ingreso nombre o apellido")
+				return
+			}
 			let client = {
 				documentNumber: this.clientDocumentNumber,
 				name: this.clientName,

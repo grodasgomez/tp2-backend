@@ -103,10 +103,11 @@ export const create = async (req) => {
   const rangeTimeWhere = normalizedRangeTimes.map((rangeTime) => {
     return {
       startTime: {
-        [Op.gte]: rangeTime.start,
+        [Op.lt]: rangeTime.end,
+
       },
       endTime: {
-        [Op.lte]: rangeTime.end,
+        [Op.gt]: rangeTime.start,
       },
     };
   });
