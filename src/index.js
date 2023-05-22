@@ -1,9 +1,10 @@
 import express from "express";
-import restaurantRouter from "./routers/restaurantRouter.js";
-import clientRouter from "./routers/clientRouter.js";
-import tableRouter from "./routers/tableRouter.js";
-import reservationRouter from "./routers/reservationRouter.js";
+import restaurantRouter from "./routes/restaurantRouter.js";
+import clientRouter from "./routes/clientRouter.js";
+import tableRouter from "./routes/tableRouter.js";
+import reservationRouter from "./routes/reservationRouter.js";
 import ValidationError from "./errors/ValidationError.js";
+import cors from "cors";
 
 import cors from 'cors';
 
@@ -12,6 +13,7 @@ const app = express();
 app.use(cors());
 
 // Indicamos que vamos a recibir datos en formato JSON
+app.use(cors());
 app.use(express.json());
 
 // Definimos las rutas de la API
@@ -31,7 +33,6 @@ app.use((err, req, res, _next) => {
   const message = err.message ?? "Internal Server Error";
   return res.status(status).json({ error: message });
 });
-
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
