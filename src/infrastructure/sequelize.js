@@ -117,6 +117,11 @@ export const Reservation = sequelize.define("Reservation", {
   date: {
     type: DataTypes.DATEONLY,
     allowNull: false,
+  },
+  capacity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
   }
 });
 

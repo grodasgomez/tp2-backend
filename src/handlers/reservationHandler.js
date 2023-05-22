@@ -57,6 +57,7 @@ export const getAll = async (req) => {
       name: reservation.Table.Restaurant.name,
       address: reservation.Table.Restaurant.address,
     },
+    capacity: reservation.capacity,
     client: {
       id: reservation.Client.id,
       name: reservation.Client.name,

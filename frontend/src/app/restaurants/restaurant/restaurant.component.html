@@ -17,6 +17,9 @@
 	<option *ngFor="let floor of floors" (ngModelChange)="ngOnChanges($event)">{{floor}}</option>
 </select>
 <br>
+<label style="font-size: 20px">Ingrese el número de personas: </label>
+<input type="number" [(ngModel)]="capacity" (ngModelChange)="ngOnChangesCapacity($event)">
+<br>
 <label style="font-size: 20px">Ingrese Cedula: </label>
 <input type="text" [(ngModel)]="clientDocumentNumber" (ngModelChange)="ngOnChangesClient($event)">
 <br>
@@ -27,9 +30,11 @@
 <input type="text" *ngIf="clientExist == false" [(ngModel)]="clientLastName">
 <br>
 <button class="btn" (click)="ngOnSubmit()">Reservar</button>
-<div id="table-buttons">
-	<a *ngFor="let table of currentTables"
-		style="position: absolute; left: {{table.positionX}}px; bottom: {{table.positionY}}px;">
-		<button class="{{selectedTable==table.id ? 'btn-selected' : 'btn'}}" id={{table.id}} #table (click)="ngOnButtonChange(table)">Capacidad {{table.capacity}}</button>
-	</a>
-</div>
+<ng-template [ngIf]="currentTables.length > 0">
+  <div id="table-buttons">
+    <a *ngFor="let table of currentTables;let i=index" style="position: absolute; left: {{table.positionX }}px; bottom: {{table.positionY}}px;">
+      <button class="{{selectedTable==table.id ? 'btn-selected' : 'btn'}}" id={{table.id}} #table (click)="ngOnButtonChange(table)">Capacidad {{table.capacity}}</button>
+    </a>
+  </div>
+</ng-template>
+<p *ngIf="currentTables.length < 1">No hay mesas disponibles</p>

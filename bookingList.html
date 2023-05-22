@@ -98,6 +98,7 @@
           "Restaurant",
           "Date",
           "Time",
+          "Capacity",
           "Client",
           "Document",
         ];
@@ -161,6 +162,7 @@
                 Restaurant: item.restaurant.name,
                 Date: item.date,
                 Time: `${item.range_times[0].start}:00 - ${item.range_times[0].end}:00`,
+                Capacity: item.capacity,
                 Client: item.client.name,
                 Document: item.client.documentNumber,
               };
@@ -232,6 +234,7 @@
         "Restaurante",
         "Fecha",
         "Hora",
+        "Capacidad",
         "Cliente",
         "Documento",
       ];

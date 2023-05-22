@@ -15,7 +15,7 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	selectedFloor: number = 1;
 	floors: number[] = [];
 	tables: Table[] = [];
-	currentTables!: Table[];
+	currentTables: Table[] = [];
 	reservations!: Reservation[];
 	clients!: Client[];
 	private sub: any;
@@ -31,7 +31,7 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	clientExist: boolean = false;
 	clientName: string = "";
 	clientLastName: string = "";
-	capacity: number = -1;
+	capacity: number = 0;
 
 	constructor(private route: ActivatedRoute, private tableService: TablesRestaurantService, private reservationsService: ReservationsRestaurantService, private clientsService: ClientsService) { }
 
@@ -62,16 +62,21 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 			maxY = Math.max(element.positionY, maxY);
 			floors = Math.max(element.floor, floors);
 		});
+    this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
 		const tableButtons = document.getElementById('table-buttons')!;
-		tableButtons.style.width = `${maxX + 115}px`;
-		tableButtons.style.height = `${maxY + 37}px`;
-		this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
+    if(tableButtons){
+      tableButtons.style.width = `${maxX + 115}px`;
+      tableButtons.style.height = `${maxY + 37}px`;
+    }
 	}
 
 	updateMap() {
 		this.selectedTable = -1;
 		this.currentTables = [];
 		this.tables.forEach(table => {
+      if(this.capacity > table.capacity)
+        return;
+
 			if (this.selectedDate) {
 				let free = true;
 				this.reservations.forEach(reservation => {
@@ -140,11 +145,9 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	ngOnButtonChange(changes: any): void {
 		if (changes.id === this.selectedTable) {
 			this.selectedTable = -1;
-			this.capacity = -1
 		}
 		else {
 			this.selectedTable = changes.id;
-			this.capacity = changes.capacity;
 		}
 	}
 
@@ -157,6 +160,9 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 			this.clientName = "";
 			this.clientLastName = "";
 		}
+	}
+  ngOnChangesCapacity(changes: any): void {
+		this.updateMap();
 	}
 
 	async ngOnSubmit(): Promise<void> {
