@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Restaurant Bookings</title>
+    <title>Lista de Reservaciones</title>
     <style>
       :root {
         --primary-color: #4caf50;
@@ -22,7 +22,7 @@
 
       label {
         display: inline-block;
-        width: 80px;
+        width: 90px;
       }
 
       input[type="text"],
@@ -124,9 +124,9 @@
           const client = document.getElementById("client").value;
 
           if (restaurant.trim() === "") {
-            alert("Please enter a restaurant name");
+            alert("Ingrese el nombre del retaurante");
           } else if (date.trim() === "") {
-            alert("Please enter a date");
+            alert("Ingrese una fecha");
           } else {
             // const restaurantId = await fetch(`/restaurants?name=${restaurant}`);
             const restaurantObj = await fetch(
@@ -134,7 +134,7 @@
             ).then((response) => response.json());
             console.log(restaurantObj.data[0]);
             if (restaurantObj.data[0] == null) {
-              alert("Restaurant not found");
+              alert("Restaurante no encontrado");
               return;
             }
             const restaurantId = restaurantObj.data[0].id;
@@ -147,7 +147,7 @@
               ).then((response) => response.json());
 
               if (clientObj.data[0] == null) {
-                alert("Client not found");
+                alert("Cliente no encontrado");
                 return;
               }
               clientId = clientObj.data[0].id;
@@ -158,7 +158,7 @@
             ).then((response) => response.json());
 
             if (reservationObj.data[0] == null) {
-              alert("Reservation not found");
+              alert("Reservación no encontrada");
               return;
             }
 
@@ -217,7 +217,7 @@
     </script>
   </head>
   <body>
-    <h1>Restaurant Bookings</h1>
+    <h1>Lista de Reservaciones</h1>
     <label for="restaurant">Restaurant:</label>
     <input type="text" id="restaurant" name="restaurant" />
     <br /><br />
@@ -233,7 +233,13 @@
 
       // Create table header row
       const headerRow = document.createElement("tr");
-      const headers = ["Table Name", "Restaurant", "Date", "Time", "Client"];
+      const headers = [
+        "Nombre de la Mesa",
+        "Restaurante",
+        "Fecha",
+        "Hora",
+        "Cliente",
+      ];
       headers.forEach((headerText) => {
         const header = document.createElement("th");
         header.textContent = headerText;
