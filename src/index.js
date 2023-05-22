@@ -1,16 +1,12 @@
 import express from "express";
-import restaurantRouter from "./routes/restaurantRouter.js";
-import clientRouter from "./routes/clientRouter.js";
-import tableRouter from "./routes/tableRouter.js";
-import reservationRouter from "./routes/reservationRouter.js";
+import restaurantRouter from "./routers/restaurantRouter.js";
+import clientRouter from "./routers/clientRouter.js";
+import tableRouter from "./routers/tableRouter.js";
+import reservationRouter from "./routers/reservationRouter.js";
 import ValidationError from "./errors/ValidationError.js";
 import cors from "cors";
 
-import cors from 'cors';
-
 const app = express();
-
-app.use(cors());
 
 // Indicamos que vamos a recibir datos en formato JSON
 app.use(cors());
