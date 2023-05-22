@@ -2,14 +2,32 @@
 	<h2>Seleccionar Mesa a Reservar</h2>
 </div>
 <div>
-	<label style="font-size: 20px">Seleccionar piso: </label>
-	<select id="floor-select" style="font-size: 17px;" [ngModel]="selectedFloor" (ngModelChange)="ngOnChanges($event)">
-		<option *ngFor="let floor of floors" (ngModelChange)="ngOnChanges($event)">{{floor}}</option>
-	</select>
+	<label>Seleccionar Fecha</label>
+	<input type="date" min="{{today}}" [ngModel]="selectedDate"
+	(ngModelChange)="ngOnChangesDate($event)">
+	<div *ngFor="let hour of hours; let i=index">
+		<input #checkbox id="{{ i }}" value="{{ 'horario' + i }}" checked=false type="checkbox" [ngModel]="selectedHour"
+		(ngModelChange)="ngOnChangesHour(checkbox)">
+		<label>{{hour}}</label><br>
+	</div>
 </div>
+<label style="font-size: 20px">Seleccionar piso: </label>
+<select id="floor-select" style="font-size: 17px;" [ngModel]="selectedFloor"
+	(ngModelChange)="ngOnChanges($event)">
+	<option *ngFor="let floor of floors" (ngModelChange)="ngOnChanges($event)">{{floor}}</option>
+</select>
+<br>
+<label style="font-size: 20px">Ingrese Cedula: </label>
+<input type="text" [(ngModel)]="clientId" (ngModelChange)="ngOnChangesClient($event)">
+<br>
+<label style="font-size: 20px" *ngIf="clientExist == false">Ingrese Nombre: </label>
+<input type="text" *ngIf="clientExist == false">
+<br>
+<label style="font-size: 20px" *ngIf="clientExist == false">Ingrese Apellido: </label>
+<input type="text" *ngIf="clientExist == false">
 <div id="table-buttons">
-	<a *ngFor="let table of currentTables" href="http://google.com/?table={{table.id}}"
+	<a *ngFor="let table of currentTables"
 		style="position: absolute; left: {{table.positionX}}px; bottom: {{table.positionY}}px;">
-		<button class="btn">Capacidad {{table.capacity}}</button>
+		<button class="{{selectedTable==table.id ? 'btn-selected' : 'btn'}}" id={{table.id}} #table (click)="ngOnButtonChange(table)">Capacidad {{table.capacity}}</button>
 	</a>
 </div>

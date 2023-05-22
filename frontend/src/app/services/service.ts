@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, lastValueFrom } from 'rxjs';
 import { RestaurantData } from '../interface/restaurant';
 import { TableData } from '../interface/table';
+import { ReservationData } from '../interface/reservation';
+import { ClientData } from '../interface/client';
 
 @Injectable({
 	providedIn: 'root'
@@ -37,5 +39,32 @@ export class TablesRestaurantService {
 
 	async getTables(id: number): Promise<TableData> {
 		return await lastValueFrom(this.http.get<TableData>(this.apiURL + String(id)));
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class ReservationsRestaurantService {
+	private apiURL = 'http://localhost:3000/reservations?restaurant=';
+	constructor(private http: HttpClient) { }
+
+	async getReservations(restaurantId: number, date: string): Promise<ReservationData> {
+		return await lastValueFrom(this.http.get<ReservationData>(this.apiURL + restaurantId + '&date=' + date));
+	}
+
+	async postReservation(reservation: any): Promise<any> {
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class ClientsService {
+	private apiURL = 'http://localhost:3000/clients/';
+	constructor(private http: HttpClient) { }
+
+	async getClients(): Promise<ClientData> {
+		return await lastValueFrom(this.http.get<ClientData>(this.apiURL));
 	}
 }
