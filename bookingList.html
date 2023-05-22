@@ -99,6 +99,7 @@
           "Date",
           "Time",
           "Client",
+          "Document",
         ];
         // Clear existing table data rows
         while (table.rows.length > 1) {
@@ -141,17 +142,7 @@
 
             let clientId = "";
 
-            if (client.trim() != "") {
-              const clientObj = await fetch(
-                `http://localhost:3000/clients?name=${client}`
-              ).then((response) => response.json());
-
-              if (clientObj.data[0] == null) {
-                alert("Cliente no encontrado");
-                return;
-              }
-              clientId = clientObj.data[0].id;
-            }
+            
 
             const reservationObj = await fetch(
               `http://localhost:3000/reservations/?restaurant=${restaurantId}&date=${date}&client=${clientId}`
@@ -164,16 +155,19 @@
 
             const reservationData = reservationObj.data;
 
-            const filteredData = reservationData.map((item) => {
+            const preClientData = reservationData.map((item) => {
               return {
                 "Table Name": item.table.name,
                 Restaurant: item.restaurant.name,
                 Date: item.date,
                 Time: `${item.range_times[0].start}:00 - ${item.range_times[0].end}:00`,
                 Client: item.client.name,
+                Document: item.client.documentNumber,
               };
             });
-
+            const filteredData = preClientData.filter((item) => {
+              return item.Client.toLowerCase().includes(client.toLowerCase()) || item.Document.toLowerCase().includes(client.toLowerCase());
+            });
             // Sort the data by start time and table name
             filteredData.sort((a, b) => {
               const dateComparison = a.Time.localeCompare(b.Time);
@@ -239,6 +233,7 @@
         "Fecha",
         "Hora",
         "Cliente",
+        "Documento",
       ];
       headers.forEach((headerText) => {
         const header = document.createElement("th");
