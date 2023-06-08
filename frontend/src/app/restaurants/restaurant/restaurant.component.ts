@@ -64,9 +64,7 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 		});
 		this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
 		const tableButtons = document.getElementById('table-buttons')!;
-		console.log(tableButtons);
 		if (tableButtons) {
-			console.log("AAAA");
 			tableButtons.style.width = `${maxX + 115}px`;
 			tableButtons.style.height = `${maxY + 37}px`;
 		}
