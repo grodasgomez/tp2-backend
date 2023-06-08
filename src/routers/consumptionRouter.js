@@ -3,7 +3,8 @@ import { createHandler } from "../utils/index.js";
 import {
   getAll,
   create,
-  update,
+  updateClient,
+  close,
   destroy,
   getByTableId,
 } from "../handlers/consumptionHandler.js";
@@ -16,7 +17,9 @@ router.get("/:id", createHandler(getByTableId));
 
 router.post("/", createHandler(create));
 
-router.put("/:id", createHandler(update));
+router.put("/client/:id", createHandler(updateClient));
+
+router.put("/close/:id", createHandler(close));
 
 router.delete("/:id", createHandler(destroy));
 
