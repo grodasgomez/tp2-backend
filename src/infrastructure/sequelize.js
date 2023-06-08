@@ -1,6 +1,11 @@
 import Sequelize, { DataTypes } from "sequelize";
-import { DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_SYNC_MODE } from "../env.js";
-
+import {
+  DB_HOST,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  DB_SYNC_MODE,
+} from "../env.js";
 
 const sequelize = new Sequelize({
   host: DB_HOST,
@@ -122,7 +127,7 @@ export const Reservation = sequelize.define("Reservation", {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
-  }
+  },
 });
 
 export const ReservationDetail = sequelize.define("ReservationDetail", {
@@ -152,12 +157,134 @@ export const ReservationDetail = sequelize.define("ReservationDetail", {
   },
 });
 
+export const Category = sequelize.define("Category", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+export const Product = sequelize.define("Product", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  categoryId: {
+    field: "category_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Category,
+      key: "id",
+    },
+  },
+  price: {
+    field: "price",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+
+export const Consumption = sequelize.define("Consumption", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  clientId: {
+    field: "client_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Client,
+      key: "id",
+    },
+  },
+  tableId: {
+    field: "table_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Table,
+      key: "id",
+    },
+  },
+  isClosed: {
+    field: "is_closed",
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  },
+  total: {
+    field: "total",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  createdAt: {
+    field: "created_at",
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  closedAt: {
+    field: "closed_at",
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+});
+
+export const ConsumptionDetail = sequelize.define("ConsumptionDetail", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  consumptionId: {
+    field: "consumption_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Consumption,
+      key: "id",
+    },
+  },
+  productId: {
+    field: "product_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Product,
+      key: "id",
+    },
+  },
+  quantity: {
+    field: "quantity",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+
 Reservation.hasMany(ReservationDetail, { foreignKey: "reservationId" });
 Reservation.belongsTo(Table, { foreignKey: "tableId" });
 Reservation.belongsTo(Client, { foreignKey: "clientId" });
 
 Restaurant.hasMany(Table, { foreignKey: "restaurantId" });
 Table.belongsTo(Restaurant, { foreignKey: "restaurantId" });
+
+Consumption.hasMany(ConsumptionDetail, { foreignKey: "consumptionId" });
+
+Product.belongsTo(Category, { foreignKey: "categoryId" });
+
+Consumption.belongsTo(Table, { foreignKey: "tableId" });
+Consumption.belongsTo(Client, { foreignKey: "clientId" });
 
 // Si DB_SYNC es force, se borran las tablas y se crean de nuevo según los modelos
 // Si DB_SYNC es alter, se modifican las tablas existentes según los modelos

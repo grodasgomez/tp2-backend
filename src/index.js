@@ -3,6 +3,8 @@ import restaurantRouter from "./routers/restaurantRouter.js";
 import clientRouter from "./routers/clientRouter.js";
 import tableRouter from "./routers/tableRouter.js";
 import reservationRouter from "./routers/reservationRouter.js";
+import categoryRouter from "./routers/categoryRouter.js";
+import productRouter from "./routers/productRouter.js";
 import ValidationError from "./errors/ValidationError.js";
 import cors from "cors";
 
@@ -17,6 +19,8 @@ app.use("/restaurants", restaurantRouter);
 app.use("/clients", clientRouter);
 app.use("/tables", tableRouter);
 app.use("/reservations", reservationRouter);
+app.use("/categories", categoryRouter);
+app.use("/products", productRouter);
 
 // Middleware para manejar errores de forma centralizada
 app.use((err, req, res, _next) => {
