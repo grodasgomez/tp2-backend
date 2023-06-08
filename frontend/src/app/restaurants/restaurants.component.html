@@ -22,7 +22,10 @@
 						<td>{{restaurant.address}}</td>
 						<td>
 							<a [routerLink]="['./', restaurant.id]">
-								<button class="btn">Seleccionar</button>
+								<button class="btn">Reservar</button>
+							</a>
+							<a [routerLink]="['./', restaurant.id, 'consumption']">
+								<button class="btn">Consumir</button>
 							</a>
 						</td>
 					</tr>

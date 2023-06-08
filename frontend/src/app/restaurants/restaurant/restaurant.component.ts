@@ -62,20 +62,22 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 			maxY = Math.max(element.positionY, maxY);
 			floors = Math.max(element.floor, floors);
 		});
-    this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
+		this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
 		const tableButtons = document.getElementById('table-buttons')!;
-    if(tableButtons){
-      tableButtons.style.width = `${maxX + 115}px`;
-      tableButtons.style.height = `${maxY + 37}px`;
-    }
+		console.log(tableButtons);
+		if (tableButtons) {
+			console.log("AAAA");
+			tableButtons.style.width = `${maxX + 115}px`;
+			tableButtons.style.height = `${maxY + 37}px`;
+		}
 	}
 
 	updateMap() {
 		this.selectedTable = -1;
 		this.currentTables = [];
 		this.tables.forEach(table => {
-      if(this.capacity > table.capacity)
-        return;
+			if (this.capacity > table.capacity)
+				return;
 
 			if (this.selectedDate) {
 				let free = true;
@@ -118,25 +120,24 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	ngOnChangesDate(changes: any): void {
-		if (changes === "") 
-		{
+		if (changes === "") {
 			this.updateMap();
 			return;
 		}
 		this.reservationsService.getReservations(this.id, changes).then((data: ReservationData) => {
 			this.reservations = data.data;
 			this.reservations.forEach(reservation => {
-                let aux: { start: number; end: number; }[] = []
-                reservation.range_times.forEach(range => {
-                    let start = range.start;
-                    let end = range.end;
-                    while (start < end) {
-                        aux.push({ start: start, end: start + 1 })
-                        start++;
-                    }
-                })
-                reservation.range_times = aux;
-            })
+				let aux: { start: number; end: number; }[] = []
+				reservation.range_times.forEach(range => {
+					let start = range.start;
+					let end = range.end;
+					while (start < end) {
+						aux.push({ start: start, end: start + 1 })
+						start++;
+					}
+				})
+				reservation.range_times = aux;
+			})
 			this.selectedDate = changes;
 			this.updateMap();
 		})
@@ -161,7 +162,7 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 			this.clientLastName = "";
 		}
 	}
-  ngOnChangesCapacity(changes: any): void {
+	ngOnChangesCapacity(changes: any): void {
 		this.updateMap();
 	}
 
