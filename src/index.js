@@ -5,6 +5,7 @@ import tableRouter from "./routers/tableRouter.js";
 import reservationRouter from "./routers/reservationRouter.js";
 import categoryRouter from "./routers/categoryRouter.js";
 import consumptionRouter from "./routers/consumptionRouter.js";
+import consumptionDetailRouter from "./routers/consumptionDetailRouter.js";
 import productRouter from "./routers/productRouter.js";
 import ValidationError from "./errors/ValidationError.js";
 import cors from "cors";
@@ -22,6 +23,7 @@ app.use("/tables", tableRouter);
 app.use("/reservations", reservationRouter);
 app.use("/categories", categoryRouter);
 app.use("/consumption", consumptionRouter);
+app.use("/consumptionDetails", consumptionDetailRouter);
 app.use("/products", productRouter);
 
 // Middleware para manejar errores de forma centralizada
