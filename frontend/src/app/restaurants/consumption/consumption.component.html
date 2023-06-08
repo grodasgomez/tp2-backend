@@ -1,14 +1,14 @@
-<!-- <label style="font-size: 20px">Seleccionar piso: </label>
+<label style="font-size: 20px">Seleccionar piso: </label>
 <select id="floor-select" style="font-size: 17px;" [ngModel]="selectedFloor"
 	(ngModelChange)="ngOnChanges($event)">
 	<option *ngFor="let floor of floors" (ngModelChange)="ngOnChanges($event)">{{floor}}</option>
-</select> -->
+</select>
 <ng-template [ngIf]="currentTables.length > 0">
 	<div id="table-buttons">
-		<a *ngFor="let table of currentTables;let i=index"
+		<a *ngFor="let table of currentTables;let i=index" [routerLink]="['./', table.id]"
 			style="position: absolute; left: {{table.positionX }}px; bottom: {{table.positionY}}px;">
 			<button class="{{selectedTable==table.id ? 'btn-selected' : 'btn'}}" id={{table.id}} #table
-				(click)="ngOnButtonChange(table)">Capacidad {{table.capacity}}</button>
+			>Capacidad {{table.capacity}}</button>
 		</a>
 	</div>
 </ng-template>

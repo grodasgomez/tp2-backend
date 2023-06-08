@@ -25,6 +25,7 @@ export class ConsumptionComponent implements OnInit, OnDestroy, OnChanges {
 		this.tableService.getTables(this.id).then((data: TableData) => {
 			this.tables = data.data;
 			this.createMap();
+			this.updateMap();
 		});
 	}
 
