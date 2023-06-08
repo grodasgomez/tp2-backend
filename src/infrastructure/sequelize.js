@@ -222,12 +222,12 @@ export const Consumption = sequelize.define("Consumption", {
   isClosed: {
     field: "is_closed",
     type: DataTypes.BOOLEAN,
-    allowNull: false,
+    defaultValue: false,
   },
   total: {
     field: "total",
     type: DataTypes.INTEGER,
-    allowNull: false,
+    defaultValue: 0,
   },
   createdAt: {
     field: "created_at",

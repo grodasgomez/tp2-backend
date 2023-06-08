@@ -7,7 +7,7 @@ export const getAll = () => {
 };
 
 export const getByRestaurant = (req) => {
-  return Table.findAll({ where: { restaurantId: req.params.id }});
+  return Table.findAll({ where: { restaurantId: req.params.id } });
 };
 
 export const create = (req) => {
