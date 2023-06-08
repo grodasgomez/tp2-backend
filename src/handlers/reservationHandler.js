@@ -57,6 +57,7 @@ export const getAll = async (req) => {
       name: reservation.Table.Restaurant.name,
       address: reservation.Table.Restaurant.address,
     },
+    capacity: reservation.capacity,
     client: {
       id: reservation.Client.id,
       name: reservation.Client.name,
@@ -103,10 +104,11 @@ export const create = async (req) => {
   const rangeTimeWhere = normalizedRangeTimes.map((rangeTime) => {
     return {
       startTime: {
-        [Op.gte]: rangeTime.start,
+        [Op.lt]: rangeTime.end,
+
       },
       endTime: {
-        [Op.lte]: rangeTime.end,
+        [Op.gt]: rangeTime.start,
       },
     };
   });

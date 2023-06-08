@@ -5,7 +5,8 @@ import { RestaurantComponent } from './restaurant/restaurant.component';
 
 const routes: Routes = [
 	{ path: '', component: RestaurantsComponent },
-	{ path: ':id', component: RestaurantComponent }
+	{ path: ':id', component: RestaurantComponent },
+	{ path: ':id/consumption', loadChildren: () => import('./consumption/consumption.module').then(m => m.ConsumptionModule) }
 ];
 
 @NgModule({
