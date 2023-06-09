@@ -1,8 +1,8 @@
-<div *ngIf="occupied == true">
+<div>
 	<h2>Consumo en la mesa {{id}}</h2>
 	<p>Cliente: {{currentClient.name}} {{currentClient.lastName}}</p>
 	<p>Precio total: {{consumption.total}}</p>
-	<button class="btn" (click)="changeList()">Cambiar Metodo</button>
+	<button class="btn" (click)="changeList()">{{currentMethod}}</button>
 	<div *ngIf="list == false">
 		<label style="font-size: 20px">Ingrese Cedula: </label>
 		<input type="text" [(ngModel)]="newClientCI">
@@ -16,6 +16,7 @@
 		<button class="btn" (click)="addClient()">Agregar Cliente</button>
 	</div>
 	<div *ngIf="list == true">
+		<label>Filtro: </label>
 		<input type="text" [(ngModel)]="searchClient" (ngModelChange)="filterClients()">
 		<table>
 			<thead>
@@ -38,7 +39,7 @@
 			</tbody>
 		</table>
 	</div>
-	<button class="btn" (click)="close()">Cerrar cuenta</button>
+	<button class="btn" *ngIf="occupied == true" (click)="close()">Cerrar cuenta</button>
 	<table>
 		<thead>
 			<tr>
@@ -57,7 +58,4 @@
 			</tr>
 		</tbody>
 	</table>
-</div>
-<div *ngIf="occupied == false">
-	No ocupado
 </div>

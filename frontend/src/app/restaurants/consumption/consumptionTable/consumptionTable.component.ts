@@ -16,18 +16,19 @@ export class ConsumptionTableComponent implements OnInit {
 	private sub: any;
 	id: number = 0;
 	occupied: boolean = false;
-	consumption!: Consumption;
 	consumptionDetail!: ConsumptionDetail[];
-	currentClient!: Client;
+	currentClient: Client = { id: -1, documentNumber: "", name: "No", lastName: "Asignado" };
+	consumption: Consumption = { id: -1, clientId: -1, details: [], total: 0, isClosed: false, tableId: this.id, createdAt: new Date(), closedAt: new Date() };;
 	clients!: Client[];
 	clientsFiltered!: Client[];
 	products!: Product[];
 	categories!: Category[];
-	newClientCI: string = '';
-	newClientName: string = '';
-	newClientLastName: string = '';
+	newClientCI: string = "";
+	newClientName: string = "";
+	newClientLastName: string = "";
 	list: boolean = false;
-	searchClient: string = '';
+	searchClient: string = "";
+	currentMethod: string = "Seleccionar Cliente"
 
 	constructor(private route: ActivatedRoute, private categoryService: CategoryService,
 		private prodService: ProductService, private consService: ConsumptionService,
@@ -41,23 +42,12 @@ export class ConsumptionTableComponent implements OnInit {
 		this.categories = await this.prodService.getProducts();
 		this.clients = (await this.clientService.getClients()).data;
 		this.clientsFiltered = [...this.clients];
-		this.consumption = (await this.consService.getConsumptions(this.id)).data;
-		this.currentClient = this.clients.find(client => +this.consumption.clientId == +client.id)!;
-		if (this.consumption) {
+		let temp = await this.consService.getConsumptions(this.id);
+		if (temp.data) {
+			this.consumption = temp.data;
+			this.currentClient = this.clients.find(client => +this.consumption.clientId == +client.id)!;
 			this.occupied = true;
 			this.consumptionDetail = this.consumption.details;
-			// let d = {
-			// 	"clientId": 1,
-			// 	"tableId": 3
-			// }
-			// let f = {
-			// 	"consumptionId": 6,
-			// 	"productId": 1,
-			// 	"quantity": 1
-			// }
-		}
-		else {
-			// TODO: create consumption
 		}
 	}
 
@@ -68,14 +58,31 @@ export class ConsumptionTableComponent implements OnInit {
 			lastName: this.newClientLastName
 		}
 		this.currentClient = (await this.clientService.postClient(JSON.stringify(client))).data;
+		this.createConsumption();
 		this.clients.push(this.currentClient);
-		console.log(this.currentClient);
+		this.filterClients();
+	}
+
+	async createConsumption(): Promise<void> {
+		let temp = {
+			"clientId": this.currentClient.id,
+			"tableId": this.id
+		}
+		this.occupied = true;
+		this.consumption = (await this.consService.postConsumption(JSON.stringify(temp))).data;
+
 	}
 
 	changeList(): void {
 		this.list = !this.list;
-		this.searchClient = '';
+		this.searchClient = "";
 		this.clientsFiltered = [...this.clients];
+		if (this.list) {
+			this.currentMethod = "Agregar Cliente";
+		}
+		else {
+			this.currentMethod = "Seleccionar Cliente";
+		}
 	}
 
 	selectClient(id: number): void {
@@ -84,17 +91,18 @@ export class ConsumptionTableComponent implements OnInit {
 		}
 		let data = JSON.stringify(temp);
 		this.currentClient = this.clients.find(client => +id === +client.id)!;
+		this.createConsumption();
 		this.consService.updateClientConsumption(this.consumption.id, data);
 	}
 
 	filterClients(): void {
 		this.clientsFiltered = this.clients.filter(client => client.name.toLowerCase().includes(this.searchClient.toLowerCase()) ||
-		client.lastName.toLowerCase().includes(this.searchClient.toLowerCase()) ||
-		client.documentNumber.includes(this.searchClient.toLowerCase()));
+			client.lastName.toLowerCase().includes(this.searchClient.toLowerCase()) ||
+			client.documentNumber.includes(this.searchClient.toLowerCase()));
 	}
 
-	close(): void {
-		this.consService.updateCloseConsumption(this.consumption.id);
+	async close(): Promise<void> {
+		await this.consService.updateCloseConsumption(this.consumption.id);
 		location.reload();
 	}
 }
