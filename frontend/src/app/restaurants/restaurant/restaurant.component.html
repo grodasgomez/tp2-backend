@@ -31,7 +31,7 @@
 <br>
 <button class="btn" (click)="ngOnSubmit()">Reservar</button>
 <ng-template [ngIf]="currentTables.length > 0">
-  <div id="table-buttons">
+  <div id="table-buttons" style="width: {{maxX}}px; height: {{maxY}}px;">
     <a *ngFor="let table of currentTables;let i=index" style="position: absolute; left: {{table.positionX }}px; bottom: {{table.positionY}}px;">
       <button class="{{selectedTable==table.id ? 'btn-selected' : 'btn'}}" id={{table.id}} #table (click)="ngOnButtonChange(table)">Capacidad {{table.capacity}}</button>
     </a>

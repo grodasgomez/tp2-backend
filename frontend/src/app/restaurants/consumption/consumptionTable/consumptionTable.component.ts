@@ -1,21 +1,20 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CategoryService, ClientsService, ConsumptionDetailService, ConsumptionService, ProductService } from 'src/app/services/service';
+import { ClientsService, ConsumptionDetailService, ConsumptionService, ProductService } from 'src/app/services/service';
 import { Consumption } from 'src/app/interface/consumption';
 import { ConsumptionDetail } from 'src/app/interface/consumptionDetail';
 import { Client } from 'src/app/interface/client';
 import { Product } from 'src/app/interface/products';
-import { Category } from 'src/app/interface/category';
 import "pdfmake/build/pdfmake"
 import { QuantizableProduct } from 'src/app/interface/quantizableProduct';
 const pdfMake = window["pdfMake"];
 pdfMake.fonts = {
-  Roboto: {
-      normal: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
-      bold: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf",
-      italics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
-      bolditalics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
-  },
+	Roboto: {
+		normal: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
+		bold: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf",
+		italics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
+		bolditalics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
+	},
 };
 
 @Component({
@@ -23,7 +22,7 @@ pdfMake.fonts = {
 	templateUrl: './consumptionTable.component.html',
 	styleUrls: ['./consumptionTable.component.css']
 })
-export class ConsumptionTableComponent implements OnInit {
+export class ConsumptionTableComponent implements OnInit, OnDestroy {
 	private sub: any;
 	id: number = 0;
 	occupied: boolean = false;
@@ -38,25 +37,25 @@ export class ConsumptionTableComponent implements OnInit {
 	list: boolean = false;
 	searchClient: string = "";
 	currentMethod: string = "Seleccionar Cliente"
-	availableProducts!: QuantizableProduct[]; 
+	availableProducts!: QuantizableProduct[];
 
-	constructor(private route: ActivatedRoute, private categoryService: CategoryService,
-		private prodService: ProductService, private consService: ConsumptionService,
-		private consDetailService: ConsumptionDetailService, private clientService: ClientsService) { }
+	constructor(private route: ActivatedRoute, private prodService: ProductService,
+		private consService: ConsumptionService, private consDetailService: ConsumptionDetailService,
+		private clientService: ClientsService) { }
 
 	async ngOnInit(): Promise<void> {
 		this.sub = this.route.params.subscribe(params => {
 			this.id = params['id'];
 		});
 		this.availableProducts = (await this.prodService.getProducts()).data.map((x: Product) => {
-			console.log(x);
 			return {
-			'id': x.id,
-			'name': x.name,
-			'categoryId': x.categoryId,
-			'price': x.price,
-			'quantity': 0
-		}});
+				'id': x.id,
+				'name': x.name,
+				'categoryId': x.categoryId,
+				'price': x.price,
+				'quantity': 0
+			}
+		});
 
 		this.clients = (await this.clientService.getClients()).data;
 		this.clientsFiltered = [...this.clients];
@@ -69,9 +68,12 @@ export class ConsumptionTableComponent implements OnInit {
 		}
 	}
 
+	ngOnDestroy(): void {
+		this.sub.unsubscribe();
+	}
+
 	async addClient(): Promise<void> {
-		if (this.newClientCI == "" || this.newClientName == "" || this.newClientLastName == "")
-		{
+		if (this.newClientCI == "" || this.newClientName == "" || this.newClientLastName == "") {
 			alert("Debe ingresar todos los datos del cliente");
 			return;
 		}
@@ -101,7 +103,7 @@ export class ConsumptionTableComponent implements OnInit {
 		}
 		this.occupied = true;
 		this.consumption = (await this.consService.postConsumption(JSON.stringify(temp))).data;
-    this.consumption.details = [];
+		this.consumption.details = [];
 
 	}
 
@@ -136,64 +138,64 @@ export class ConsumptionTableComponent implements OnInit {
 
 	async close() {
 		await this.consService.updateCloseConsumption(this.consumption.id);
-    const bodyDetails = this.consumptionDetail.map((detail) => {
-      return [
-        detail.product.name,
-        detail.product.price,
-        detail.quantity,
-        detail.product.price * detail.quantity
-      ];
-    });
+		const bodyDetails = this.consumptionDetail.map((detail) => {
+			return [
+				detail.product.name,
+				detail.product.price,
+				detail.quantity,
+				detail.product.price * detail.quantity
+			];
+		});
 
-    const documentDefinition = {
-      content: [
-        {
-          text: "COMPROBANTE DE CONSUMICION\n",
-          alignment: "center",
-        },
-        `Cliente: ${this.currentClient.name} ${this.currentClient.lastName}`,
-        `Nro Mesa: ${this.consumption.tableId}`,
-        `Fecha: ${new Date(this.consumption.createdAt).toLocaleDateString()}`,
-        {
-          text: "DETALLE\n\n",
-          alignment: "center",
-        },
-        {
-          layout: "lightHorizontalLines", // optional
-          table: {
-            // headers are automatically repeated if the table spans over multiple pages
-            // you can declare how many rows should be treated as headers
-            headerRows: 1,
-            widths: ["*", "auto", 100, "*"],
-            body: [
-              [
-                { text: "Producto", bold: true },
-                { text: "Precio Unitario", bold: true },
-                { text: "Cantidad", bold: true },
-                { text: "Precio total", bold: true },
-              ],
-              ...bodyDetails,
-            ],
-          },
-        },
-        {
-          text: `\n\nTotal a pagar: ${this.consumption.total}`,
-          bold: true,
-        },
-      ],
-    } as any;
+		const documentDefinition = {
+			content: [
+				{
+					text: "COMPROBANTE DE CONSUMICION\n",
+					alignment: "center",
+				},
+				`Cliente: ${this.currentClient.name} ${this.currentClient.lastName}`,
+				`Nro Mesa: ${this.consumption.tableId}`,
+				`Fecha: ${new Date(this.consumption.createdAt).toLocaleDateString()}`,
+				{
+					text: "DETALLE\n\n",
+					alignment: "center",
+				},
+				{
+					layout: "lightHorizontalLines", // optional
+					table: {
+						// headers are automatically repeated if the table spans over multiple pages
+						// you can declare how many rows should be treated as headers
+						headerRows: 1,
+						widths: ["*", "auto", 100, "*"],
+						body: [
+							[
+								{ text: "Producto", bold: true },
+								{ text: "Precio Unitario", bold: true },
+								{ text: "Cantidad", bold: true },
+								{ text: "Precio total", bold: true },
+							],
+							...bodyDetails,
+						],
+					},
+				},
+				{
+					text: `\n\nTotal a pagar: ${this.consumption.total}`,
+					bold: true,
+				},
+			],
+		} as any;
 
-    pdfMake.createPdf(documentDefinition).open();
+		pdfMake.createPdf(documentDefinition).open();
 
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
+		setTimeout(() => {
+			location.reload();
+		}, 1000);
 	}
 
 	addDetail(product: QuantizableProduct) {
-		if (!(document.forms as { [key: string]: any })["product"+product.id.toString()+"form"].reportValidity())
+		if (!(document.forms as { [key: string]: any })["product" + product.id.toString() + "form"].reportValidity())
 			return;
-		if(this.currentClient.id === -1) {
+		if (this.currentClient.id === -1) {
 			alert("No puede agregar productos antes de seleccionar cliente");
 			return;
 		}
@@ -210,7 +212,7 @@ export class ConsumptionTableComponent implements OnInit {
 			}
 			res.data.product = product;
 			this.consumption.total += product.price * product.quantity;
-			delete(res.data.product.quantity);
+			delete (res.data.product.quantity);
 			this.consumptionDetail.push(res.data);
 			product.quantity = 0;
 		})

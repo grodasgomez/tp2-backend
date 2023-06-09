@@ -32,6 +32,8 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 	clientName: string = "";
 	clientLastName: string = "";
 	capacity: number = 0;
+	maxX: number = 0;
+	maxY: number = 0;
 
 	constructor(private route: ActivatedRoute, private tableService: TablesRestaurantService, private reservationsService: ReservationsRestaurantService, private clientsService: ClientsService) { }
 
@@ -62,12 +64,9 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 			maxY = Math.max(element.positionY, maxY);
 			floors = Math.max(element.floor, floors);
 		});
+		this.maxX = maxX + 115;
+		this.maxY = maxY + 37;
 		this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
-		const tableButtons = document.getElementById('table-buttons')!;
-		if (tableButtons) {
-			tableButtons.style.width = `${maxX + 115}px`;
-			tableButtons.style.height = `${maxY + 37}px`;
-		}
 	}
 
 	updateMap() {

@@ -12,10 +12,11 @@ export class ConsumptionComponent implements OnInit, OnDestroy, OnChanges {
 	private sub: any;
 	tables: Table[] = [];
 	private id: number = 0;
-	selectedTable: number = -1;
 	currentTables: Table[] = [];
 	floors: number[] = [];
 	selectedFloor: number = 1;
+	maxX: number = 0;
+	maxY: number = 0;
 	constructor(private route: ActivatedRoute, private tableService: TablesRestaurantService) { }
 
 	ngOnInit(): void {
@@ -38,31 +39,18 @@ export class ConsumptionComponent implements OnInit, OnDestroy, OnChanges {
 			maxY = Math.max(element.positionY, maxY);
 			floors = Math.max(element.floor, floors);
 		});
+		this.maxX = maxX + 115;
+		this.maxY = maxY + 37;
 		this.floors = Array.from(Array(floors).keys()).map(x => x + 1);
-		const tableButtons = document.getElementById('table-buttons')!;
-		if (tableButtons) {
-			tableButtons.style.width = `${maxX + 115}px`;
-			tableButtons.style.height = `${maxY + 37}px`;
-		}
 	}
 
 	updateMap() {
-		this.selectedTable = -1;
 		this.currentTables = [];
 		this.tables.forEach(table => {
 			if (+this.selectedFloor === +table.floor) {
 				this.currentTables.push(table);
 			}
 		});
-	}
-
-	ngOnButtonChange(changes: any): void {
-		if (changes.id === this.selectedTable) {
-			this.selectedTable = -1;
-		}
-		else {
-			this.selectedTable = changes.id;
-		}
 	}
 
 	ngOnChanges(changes: any): void {
