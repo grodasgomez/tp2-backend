@@ -57,7 +57,7 @@ export const create = async (req) => {
   }
   payload["createdAt"] = new Date();
 
-  console.log(Consumption.create(payload));
+  console.log(payload);
   return Consumption.create(payload);
 };
 

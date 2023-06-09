@@ -27,7 +27,7 @@ export const create = (req) => {
   }
   const payload = req.body;
 
-  console.log(Table.create(payload));
+  console.log(payload);
   return Table.create(payload);
 };
 

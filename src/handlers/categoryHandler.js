@@ -17,7 +17,7 @@ export const create = (req) => {
   }
   const payload = req.body;
 
-  console.log(Category.create(payload));
+  console.log(payload);
   return Category.create(payload);
 };
 

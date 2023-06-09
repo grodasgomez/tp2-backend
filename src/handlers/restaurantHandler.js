@@ -39,7 +39,7 @@ export const create = (req) => {
   }
   const payload = req.body;
 
-  console.log(Restaurant.create(payload));
+  console.log(payload);
   return Restaurant.create(payload);
 };
 export const update = async (req) => {

@@ -23,7 +23,7 @@ export const create = async (req) => {
 
   if (!category) throw new ApiError("Category not found", 404);
 
-  console.log(Product.create(payload));
+  console.log(payload);
   return Product.create(payload);
 };
 
