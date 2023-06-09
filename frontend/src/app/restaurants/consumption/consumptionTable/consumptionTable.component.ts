@@ -27,7 +27,7 @@ export class ConsumptionTableComponent implements OnInit {
 	private sub: any;
 	id: number = 0;
 	occupied: boolean = false;
-	consumptionDetail!: ConsumptionDetail[];
+	consumptionDetail: ConsumptionDetail[] = [];
 	currentClient: Client = { id: -1, documentNumber: "", name: "No", lastName: "Asignado" };
 	consumption: Consumption = { id: -1, clientId: -1, details: [], total: 0, isClosed: false, tableId: this.id, createdAt: new Date(), closedAt: new Date() };;
 	clients!: Client[];
@@ -75,7 +75,15 @@ export class ConsumptionTableComponent implements OnInit {
 			name: this.newClientName,
 			lastName: this.newClientLastName
 		}
-		this.currentClient = (await this.clientService.postClient(JSON.stringify(client))).data;
+		const res = await this.clientService.postClient(JSON.stringify(client));
+		if (res.error) {
+			if (res.error.contains("Already exists client"))
+				alert("Ya existe un cliente con ese documento!");
+			else
+				alert("No se pudo agregar!");
+			return;
+		}
+		this.currentClient = res.data;
 		this.createConsumption();
 		this.clients.push(this.currentClient);
 		this.filterClients();
@@ -122,7 +130,7 @@ export class ConsumptionTableComponent implements OnInit {
 
 	async close() {
 		await this.consService.updateCloseConsumption(this.consumption.id);
-    const bodyDetails = this.consumption.details.map((detail) => {
+    const bodyDetails = this.consumptionDetail.map((detail) => {
       return [
         detail.product.name,
         detail.product.price,
@@ -195,10 +203,10 @@ export class ConsumptionTableComponent implements OnInit {
 				return;
 			}
 			res.data.product = product;
+			this.consumption.total += product.price * product.quantity;
 			delete(res.data.product.quantity);
 			this.consumptionDetail.push(res.data);
 			product.quantity = 0;
-			console.log(this.consumptionDetail);
 		})
 	}
 }

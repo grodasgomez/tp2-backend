@@ -72,9 +72,9 @@ export class ClientsService {
 		return await lastValueFrom(this.http.get<ClientData>(this.apiURL));
 	}
 
-	async postClient(data: String): Promise<{data: Client}> {
+	async postClient(data: String): Promise<any> {
 		const options = { headers: { 'Content-Type': 'application/json' } };
-		return lastValueFrom(this.http.post<{data: Client}>(this.apiURL, data, options))
+		return lastValueFrom(this.http.post<any>(this.apiURL, data, options))
 	}
 }
 
