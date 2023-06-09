@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, lastValueFrom } from 'rxjs';
+import { Observable, catchError, lastValueFrom } from 'rxjs';
 import { RestaurantData } from '../interface/restaurant';
 import { TableData } from '../interface/table';
 import { Reservation, ReservationData } from '../interface/reservation';
@@ -74,7 +74,10 @@ export class ClientsService {
 
 	async postClient(data: String): Promise<any> {
 		const options = { headers: { 'Content-Type': 'application/json' } };
-		return lastValueFrom(this.http.post<any>(this.apiURL, data, options))
+		return lastValueFrom(this.http.post<any>(this.apiURL, data, options).pipe(catchError((error) => {
+			alert("No se ha podido crear el cliente porque ya existe un cliente con ese documento");
+			return error
+		})))
 	}
 }
 
@@ -110,7 +113,7 @@ export class ConsumptionService {
 	constructor(private http: HttpClient) { }
 
 	async getConsumptions(id: number): Promise<any> {
-		return await lastValueFrom(this.http.get<any>(this.apiURL+ '/' + id));
+		return await lastValueFrom(this.http.get<any>(this.apiURL + '/' + id));
 	}
 
 	async postConsumption(data: String): Promise<any> {
@@ -123,7 +126,7 @@ export class ConsumptionService {
 		return lastValueFrom(this.http.put<any>(this.apiURL + '/client/' + id, data, options))
 	}
 
-	async updateCloseConsumption(id:number): Promise<any> {
+	async updateCloseConsumption(id: number): Promise<any> {
 		const options = { headers: { 'Content-Type': 'application/json' } };
 		return lastValueFrom(this.http.put<any>(this.apiURL + '/close/' + id, null, options))
 	}
@@ -137,7 +140,7 @@ export class ConsumptionDetailService {
 	constructor(private http: HttpClient) { }
 
 	async getConsumptionDetails(id: number): Promise<any> {
-		return await lastValueFrom(this.http.get<any>(this.apiURL+ '/' + id));
+		return await lastValueFrom(this.http.get<any>(this.apiURL + '/' + id));
 	}
 
 	async postConsumptionDetail(data: String): Promise<any> {

@@ -70,21 +70,20 @@ export class ConsumptionTableComponent implements OnInit {
 	}
 
 	async addClient(): Promise<void> {
+		if (this.newClientCI == "" || this.newClientName == "" || this.newClientLastName == "")
+		{
+			alert("Debe ingresar todos los datos del cliente");
+			return;
+		}
 		let client = {
 			documentNumber: this.newClientCI,
 			name: this.newClientName,
 			lastName: this.newClientLastName
 		}
 		const res = await this.clientService.postClient(JSON.stringify(client));
-		if (res.error) {
-			if (res.error.contains("Already exists client"))
-				alert("Ya existe un cliente con ese documento!");
-			else
-				alert("No se pudo agregar!");
-			return;
-		}
 		this.currentClient = res.data;
-		this.createConsumption();
+		if (!this.occupied)
+			this.createConsumption();
 		this.clients.push(this.currentClient);
 		this.filterClients();
 	}
