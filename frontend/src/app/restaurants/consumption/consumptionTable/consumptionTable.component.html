@@ -39,7 +39,7 @@
 			</tbody>
 		</table>
 	</div>
-	<button class="btn" *ngIf="occupied == true" (click)="close()">Cerrar cuenta</button>
+	<button class="btn" *ngIf="occupied == true && consumption.details.length > 0" (click)="close()">Cerrar cuenta</button>
 	<table>
 		<thead>
 			<tr>
