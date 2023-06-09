@@ -85,6 +85,12 @@ export class ConsumptionTableComponent implements OnInit {
 		if (!this.occupied)
 			this.createConsumption();
 		this.clients.push(this.currentClient);
+		//update client in consumption after insert a new client
+		let temp = {
+			"clientId": this.currentClient.id,
+		}
+		let data = JSON.stringify(temp);
+		this.consService.updateClientConsumption(this.consumption.id, data);
 		this.filterClients();
 	}
 
@@ -117,7 +123,8 @@ export class ConsumptionTableComponent implements OnInit {
 		}
 		let data = JSON.stringify(temp);
 		this.currentClient = this.clients.find(client => +id === +client.id)!;
-		await this.createConsumption();
+		if (!this.occupied)
+			await this.createConsumption();
 		this.consService.updateClientConsumption(this.consumption.id, data);
 	}
 
