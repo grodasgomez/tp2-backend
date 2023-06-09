@@ -23,6 +23,8 @@ export const getAll = async (req) => {
     lastName: client.lastName,
     documentNumber: client.documentNumber,
   }));
+
+  console.log(data);
   return data;
 };
 
@@ -47,5 +49,7 @@ export const create = async (req) => {
     );
   }
   const data = await Client.create(payload);
+
+  console.log(data);
   return data;
 };

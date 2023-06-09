@@ -70,6 +70,7 @@ export const getAll = async (req) => {
     })),
   }));
 
+  console.log(data);
   return data;
 };
 
@@ -105,7 +106,6 @@ export const create = async (req) => {
     return {
       startTime: {
         [Op.lt]: rangeTime.end,
-
       },
       endTime: {
         [Op.gt]: rangeTime.start,
@@ -149,5 +149,7 @@ export const create = async (req) => {
     ...reservation.toJSON(),
     rangeTimes: details,
   };
+
+  console.log(data);
   return data;
 };

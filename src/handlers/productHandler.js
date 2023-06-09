@@ -4,6 +4,7 @@ import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
 
 export const getAll = () => {
+  console.log(Product.findAll());
   return Product.findAll();
 };
 
@@ -22,6 +23,7 @@ export const create = async (req) => {
 
   if (!category) throw new ApiError("Category not found", 404);
 
+  console.log(Product.create(payload));
   return Product.create(payload);
 };
 
@@ -49,6 +51,7 @@ export const update = async (req) => {
 
   if (!updated[0]) throw new ApiError("Product not found", 404);
 
+  console.log(Product.findByPk(productId));
   return Product.findByPk(productId);
 };
 
@@ -60,5 +63,7 @@ export const destroy = async (req) => {
   await product.destroy({
     where: { id: product },
   });
+
+  console.log(product);
   return product;
 };

@@ -24,6 +24,8 @@ export const getAll = async (req) => {
     updatedAt: restaurant.updatedAt,
     createdAt: restaurant.createdAt,
   }));
+
+  console.log(data);
   return data;
 };
 
@@ -36,6 +38,8 @@ export const create = (req) => {
     throw new ValidationError(validator.errors.all());
   }
   const payload = req.body;
+
+  console.log(Restaurant.create(payload));
   return Restaurant.create(payload);
 };
 export const update = async (req) => {
@@ -51,6 +55,7 @@ export const update = async (req) => {
   await Restaurant.update(payload, {
     where: { id: restaurantId },
   });
+  console.log(Restaurant.findByPk(restaurantId));
   return Restaurant.findByPk(restaurantId);
 };
 
@@ -62,5 +67,6 @@ export const destroy = async (req) => {
   await Restaurant.destroy({
     where: { id: restaurantId },
   });
+  console.log(restaurant);
   return restaurant;
 };

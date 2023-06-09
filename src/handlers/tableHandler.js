@@ -2,11 +2,14 @@ import ValidatorJs from "validatorjs";
 import { Table } from "../infrastructure/sequelize.js";
 import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
+
 export const getAll = () => {
+  console.log(Table.findAll());
   return Table.findAll();
 };
 
 export const getByRestaurant = (req) => {
+  console.log(Table.findAll({ where: { restaurantId: req.params.id } }));
   return Table.findAll({ where: { restaurantId: req.params.id } });
 };
 
@@ -23,6 +26,8 @@ export const create = (req) => {
     throw new ValidationError(validator.errors.all());
   }
   const payload = req.body;
+
+  console.log(Table.create(payload));
   return Table.create(payload);
 };
 
@@ -47,6 +52,8 @@ export const update = async (req) => {
   if (!updated) {
     throw new ApiError("Table not found", 404);
   }
+
+  console.log(Table.findByPk(tableId));
   return Table.findByPk(tableId);
 };
 
@@ -58,5 +65,7 @@ export const destroy = async (req) => {
   await table.destroy({
     where: { id: table },
   });
+
+  console.log(table);
   return table;
 };

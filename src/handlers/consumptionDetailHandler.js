@@ -8,10 +8,16 @@ import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
 
 export const getAll = () => {
+  console.log(ConsumptionDetail.findAll());
   return ConsumptionDetail.findAll();
 };
 
 export const getByConsumptionId = (req) => {
+  console.log(
+    ConsumptionDetail.findAll({
+      where: { consumptionId: req.params.id },
+    })
+  );
   return ConsumptionDetail.findAll({
     where: { consumptionId: req.params.id },
   });
@@ -44,5 +50,6 @@ export const create = async (req) => {
     by: payload.quantity * foundProduct.price,
   });
 
+  console.log(ConsumptionDetail.create(payload));
   return ConsumptionDetail.create(payload);
 };
