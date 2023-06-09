@@ -38,8 +38,8 @@ export class ConsumptionTableComponent implements OnInit {
 		this.sub = this.route.params.subscribe(params => {
 			this.id = params['id'];
 		});
-		this.products = await this.categoryService.getCategories();
-		this.categories = await this.prodService.getProducts();
+		this.products = await this.prodService.getProducts();
+		this.categories = await this.categoryService.getCategories();
 		this.clients = (await this.clientService.getClients()).data;
 		this.clientsFiltered = [...this.clients];
 		let temp = await this.consService.getConsumptions(this.id);
@@ -85,13 +85,13 @@ export class ConsumptionTableComponent implements OnInit {
 		}
 	}
 
-	selectClient(id: number): void {
+	async selectClient(id: number): Promise<void> {
 		let temp = {
 			"clientId": id,
 		}
 		let data = JSON.stringify(temp);
 		this.currentClient = this.clients.find(client => +id === +client.id)!;
-		this.createConsumption();
+		await this.createConsumption();
 		this.consService.updateClientConsumption(this.consumption.id, data);
 	}
 
