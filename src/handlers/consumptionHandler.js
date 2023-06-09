@@ -21,7 +21,7 @@ export const getByTableId = (req) => {
   });
 };
 
-export const create = (req) => {
+export const create = async (req) => {
   const validator = new ValidatorJs(req.body, {
     clientId: "required|integer",
     tableId: "required|integer",
@@ -30,6 +30,10 @@ export const create = (req) => {
     throw new ValidationError(validator.errors.all());
   }
   const payload = req.body;
+  const contConsumption = await Consumption.count({where: {tableId: payload.tableId, isClosed: false}});
+  if (contConsumption > 0) {
+    throw new ApiError("Table is already in use", 400);
+  }
   payload["createdAt"] = new Date();
   return Consumption.create(payload);
 };
