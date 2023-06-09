@@ -1,1 +1,63 @@
-asdf
+<div *ngIf="occupied == true">
+	<h2>Consumo en la mesa {{id}}</h2>
+	<p>Cliente: {{currentClient.name}} {{currentClient.lastName}}</p>
+	<p>Precio total: {{consumption.total}}</p>
+	<button class="btn" (click)="changeList()">Cambiar Metodo</button>
+	<div *ngIf="list == false">
+		<label style="font-size: 20px">Ingrese Cedula: </label>
+		<input type="text" [(ngModel)]="newClientCI">
+		<br>
+		<label style="font-size: 20px">Ingrese Nombre: </label>
+		<input type="text" [(ngModel)]="newClientName">
+		<br>
+		<label style="font-size: 20px">Ingrese Apellido: </label>
+		<input type="text" [(ngModel)]="newClientLastName">
+		<br>
+		<button class="btn" (click)="addClient()">Agregar Cliente</button>
+	</div>
+	<div *ngIf="list == true">
+		<input type="text" [(ngModel)]="searchClient" (ngModelChange)="filterClients()">
+		<table>
+			<thead>
+				<tr>
+					<th>CI</th>
+					<th>Nombre</th>
+					<th>Apellido</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let client of clientsFiltered">
+					<td>{{client.documentNumber}}</td>
+					<td>{{client.name}}</td>
+					<td>{{client.lastName}}</td>
+					<td>
+						<button class="btn" (click)="selectClient(client.id)">Seleccionar Cliente</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<button class="btn" (click)="close()">Cerrar cuenta</button>
+	<table>
+		<thead>
+			<tr>
+				<th>Producto</th>
+				<th>Precio unitario</th>
+				<th>Cantidad</th>
+				<th>Precio total</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let detail of consumptionDetail">
+				<td>{{detail.product.name}}</td>
+				<td>{{detail.product.price}}</td>
+				<td>{{detail.quantity}}</td>
+				<td>{{detail.product.price * detail.quantity}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div *ngIf="occupied == false">
+	No ocupado
+</div>

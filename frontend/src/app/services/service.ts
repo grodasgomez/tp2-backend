@@ -72,8 +72,76 @@ export class ClientsService {
 		return await lastValueFrom(this.http.get<ClientData>(this.apiURL));
 	}
 
-	async postClient(data: String): Promise<Client> {
+	async postClient(data: String): Promise<{data: Client}> {
 		const options = { headers: { 'Content-Type': 'application/json' } };
-		return lastValueFrom(this.http.post<Client>(this.apiURL, data, options))
+		return lastValueFrom(this.http.post<{data: Client}>(this.apiURL, data, options))
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class CategoryService {
+	private apiURL = 'http://localhost:3000/categories';
+	constructor(private http: HttpClient) { }
+
+	async getCategories(): Promise<any> {
+		return await lastValueFrom(this.http.get<any>(this.apiURL));
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class ProductService {
+	private apiURL = 'http://localhost:3000/products';
+	constructor(private http: HttpClient) { }
+
+	async getProducts(): Promise<any> {
+		return await lastValueFrom(this.http.get<any>(this.apiURL));
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class ConsumptionService {
+	private apiURL = 'http://localhost:3000/consumption';
+	constructor(private http: HttpClient) { }
+
+	async getConsumptions(id: number): Promise<any> {
+		return await lastValueFrom(this.http.get<any>(this.apiURL+ '/' + id));
+	}
+
+	async postConsumption(data: String): Promise<any> {
+		const options = { headers: { 'Content-Type': 'application/json' } };
+		return lastValueFrom(this.http.post<any>(this.apiURL, data, options))
+	}
+
+	async updateClientConsumption(id: number, data: String): Promise<any> {
+		const options = { headers: { 'Content-Type': 'application/json' } };
+		return lastValueFrom(this.http.put<any>(this.apiURL + '/client/' + id, data, options))
+	}
+
+	async updateCloseConsumption(id:number): Promise<any> {
+		const options = { headers: { 'Content-Type': 'application/json' } };
+		return lastValueFrom(this.http.put<any>(this.apiURL + '/close/' + id, null, options))
+	}
+}
+
+@Injectable({
+	providedIn: 'root'
+})
+export class ConsumptionDetailService {
+	private apiURL = 'http://localhost:3000/consumptionDetails';
+	constructor(private http: HttpClient) { }
+
+	async getConsumptionDetails(id: number): Promise<any> {
+		return await lastValueFrom(this.http.get<any>(this.apiURL+ '/' + id));
+	}
+
+	async postConsumptionDetail(data: String): Promise<any> {
+		const options = { headers: { 'Content-Type': 'application/json' } };
+		return lastValueFrom(this.http.post<any>(this.apiURL, data, options))
 	}
 }

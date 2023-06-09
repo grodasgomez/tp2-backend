@@ -279,12 +279,14 @@ Reservation.belongsTo(Client, { foreignKey: "clientId" });
 Restaurant.hasMany(Table, { foreignKey: "restaurantId" });
 Table.belongsTo(Restaurant, { foreignKey: "restaurantId" });
 
-Consumption.hasMany(ConsumptionDetail, { foreignKey: "consumptionId" });
+Consumption.hasMany(ConsumptionDetail, { foreignKey: "consumptionId", as: 'details' });
 
 Product.belongsTo(Category, { foreignKey: "categoryId" });
 
 Consumption.belongsTo(Table, { foreignKey: "tableId" });
 Consumption.belongsTo(Client, { foreignKey: "clientId" });
+
+ConsumptionDetail.belongsTo(Product, { foreignKey: "productId", as: 'product' });
 
 // Si DB_SYNC es force, se borran las tablas y se crean de nuevo según los modelos
 // Si DB_SYNC es alter, se modifican las tablas existentes según los modelos

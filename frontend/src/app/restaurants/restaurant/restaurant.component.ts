@@ -194,9 +194,7 @@ export class RestaurantComponent implements OnInit, OnDestroy, OnChanges {
 				lastName: this.clientLastName
 			}
 			clientExisted = false;
-			clientId = await this.clientsService.postClient(JSON.stringify(client)).then((data: any) => {
-				return data.data.id;
-			})
+			clientId = (await this.clientsService.postClient(JSON.stringify(client))).data.id
 		}
 		let aux: { start: number; end: number; }[] = []
 		this.selectedHours.forEach(element => {

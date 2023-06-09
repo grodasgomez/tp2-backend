@@ -1,5 +1,5 @@
 import ValidatorJs from "validatorjs";
-import { Consumption } from "../infrastructure/sequelize.js";
+import { Consumption, ConsumptionDetail, Product } from "../infrastructure/sequelize.js";
 import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
 
@@ -10,6 +10,14 @@ export const getAll = () => {
 export const getByTableId = (req) => {
   return Consumption.findOne({
     where: { tableId: req.params.id, isClosed: false },
+    include: {
+      model: ConsumptionDetail,
+      as: "details",
+      include: {
+        model: Product,
+        as: "product",
+      },
+    },
   });
 };
 
