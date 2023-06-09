@@ -44,5 +44,11 @@ export const create = async (req) => {
     by: payload.quantity * foundProduct.price,
   });
 
-  return ConsumptionDetail.create(payload);
+  return ConsumptionDetail.create(payload,
+    {
+      include: {
+        model: Product,
+        as: "product",
+      }
+    });
 };

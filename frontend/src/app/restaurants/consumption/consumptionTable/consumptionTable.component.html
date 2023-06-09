@@ -39,6 +39,26 @@
 			</tbody>
 		</table>
 	</div>
+	<div id="details-div">
+		<table>
+			<thead>
+				<tr>
+					<th>Producto</th>
+					<th>Precio unitario</th>
+					<th>Cantidad</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr *ngFor="let product of availableProducts">
+						<td>{{product.name}}</td>
+						<td>{{product.price}}</td>
+						<td><form id="product{{product.id}}form"><input type="number" [(ngModel)]="product.quantity" min="1"></form></td>
+						<td><button class="btn" (click)="addDetail(product)">Agregar</button></td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
 	<button class="btn" *ngIf="occupied == true && consumption.details.length > 0" (click)="close()">Cerrar cuenta</button>
 	<table>
 		<thead>
