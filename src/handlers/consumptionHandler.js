@@ -1,13 +1,32 @@
 import ValidatorJs from "validatorjs";
-import { Consumption, ConsumptionDetail, Product } from "../infrastructure/sequelize.js";
+import {
+  Consumption,
+  ConsumptionDetail,
+  Product,
+} from "../infrastructure/sequelize.js";
 import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
 
 export const getAll = () => {
+  console.log(Consumption.findAll());
   return Consumption.findAll();
 };
 
 export const getByTableId = (req) => {
+  console.log(
+    Consumption.findOne({
+      where: { tableId: req.params.id, isClosed: false },
+      include: {
+        model: ConsumptionDetail,
+        as: "details",
+        include: {
+          model: Product,
+          as: "product",
+        },
+      },
+    })
+  );
+
   return Consumption.findOne({
     where: { tableId: req.params.id, isClosed: false },
     include: {
@@ -30,11 +49,15 @@ export const create = async (req) => {
     throw new ValidationError(validator.errors.all());
   }
   const payload = req.body;
-  const contConsumption = await Consumption.count({where: {tableId: payload.tableId, isClosed: false}});
+  const contConsumption = await Consumption.count({
+    where: { tableId: payload.tableId, isClosed: false },
+  });
   if (contConsumption > 0) {
     throw new ApiError("Table is already in use", 400);
   }
   payload["createdAt"] = new Date();
+
+  console.log(payload);
   return Consumption.create(payload);
 };
 
@@ -54,6 +77,8 @@ export const updateClient = async (req) => {
   if (!updated[0]) {
     throw new ApiError("Consumption not found", 404);
   }
+
+  console.log(Consumption.findByPk(consumptionId));
   return Consumption.findByPk(consumptionId);
 };
 
@@ -68,6 +93,8 @@ export const close = async (req) => {
   if (!updated[0]) {
     throw new ApiError("Consumption not found", 404);
   }
+
+  console.log(Consumption.findByPk(consumptionId));
   return Consumption.findByPk(consumptionId);
 };
 
@@ -79,5 +106,7 @@ export const destroy = async (req) => {
   await consumption.destroy({
     where: { id: consumption },
   });
+
+  console.log(consumption);
   return consumption;
 };

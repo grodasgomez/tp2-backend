@@ -4,9 +4,9 @@ import ValidationError from "../errors/ValidationError.js";
 import ApiError from "../errors/ApiError.js";
 
 export const getAll = () => {
+  console.log(Category.findAll());
   return Category.findAll();
 };
-
 
 export const create = (req) => {
   const validator = new ValidatorJs(req.body, {
@@ -16,6 +16,8 @@ export const create = (req) => {
     throw new ValidationError(validator.errors.all());
   }
   const payload = req.body;
+
+  console.log(payload);
   return Category.create(payload);
 };
 
@@ -35,6 +37,8 @@ export const update = async (req) => {
   if (!updated[0]) {
     throw new ApiError("Category not found", 404);
   }
+
+  console.log(Category.findByPk(categoryId));
   return Category.findByPk(categoryId);
 };
 
@@ -46,5 +50,7 @@ export const destroy = async (req) => {
   await category.destroy({
     where: { id: category },
   });
+
+  console.log(category);
   return category;
 };
